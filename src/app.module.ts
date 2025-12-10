@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { envValidation } from './config/env.validation';
+import { UserModule } from './user/user.module';
 import databaseConfig from './config/database.config';
 
 const ENV_MODE = process.env.ENV_MODE;
@@ -30,6 +31,7 @@ const ENV_MODE = process.env.ENV_MODE;
         synchronize: configService.get('databaseConfig.synchronize'),
       }),
     }),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
