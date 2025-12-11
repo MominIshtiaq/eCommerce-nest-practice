@@ -1,23 +1,72 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { HashingProvider } from 'src/common/hashing/hashing.provider';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    private readonly hashingProvider: HashingProvider,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  public async checkUserExistByEmail(email: string) {
+    let user: User | null = null;
+    user = await this.userRepository.findOne({ where: { email } });
+    return !!user;
+  }
+
+  public async findUserByEmail(email: string) {
+    try {
+      let user: User | null;
+      user = await this.userRepository.findOne({ where: { email } });
+
+      if (!user) {
+        throw new BadRequestException('User with this email does not exist');
+      }
+
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  public async create(createUserDto: CreateUserDto) {
+    try {
+      const checkUser = await this.checkUserExistByEmail(createUserDto.email);
+
+      if (checkUser) {
+        throw new BadRequestException('User with this email already exists!!!');
+      }
+
+      const user = this.userRepository.create({
+        ...createUserDto,
+        password: await this.hashingProvider.hashpassword(
+          createUserDto.password,
+        ),
+      });
+      await this.userRepository.save(user);
+
+      return {
+        data: user,
+        message: 'User created Successfully',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
   findAll() {
-    return `This action returns all user`;
+    return this.userRepository.find();
   }
 
   findOne(id: number) {

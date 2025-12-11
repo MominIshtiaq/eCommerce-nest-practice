@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { envValidation } from './config/env.validation';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 import databaseConfig from './config/database.config';
 
 const ENV_MODE = process.env.ENV_MODE;
@@ -13,7 +14,8 @@ const ENV_MODE = process.env.ENV_MODE;
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ENV_MODE ? '.env' : `.env.${ENV_MODE?.trim()}`,
+      envFilePath:
+        ENV_MODE === 'production' ? '.env' : `.env.${ENV_MODE?.trim()}`,
       load: [databaseConfig],
       validationSchema: envValidation,
     }),
@@ -32,6 +34,7 @@ const ENV_MODE = process.env.ENV_MODE;
       }),
     }),
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
