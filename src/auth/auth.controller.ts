@@ -8,13 +8,14 @@ import AllowAnonymous from './decorator/allow-anonymous.decorator';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('signUp')
+  @AllowAnonymous()
+  @Post('signup')
   signUp(@Body() signUpAuthDto: SignUpAuthDto) {
     return this.authService.signUp(signUpAuthDto);
   }
 
   @AllowAnonymous()
-  @Post('signIn')
+  @Post('signin')
   @HttpCode(HttpStatus.OK)
   signIn(@Body() signInAuthDto: SignInAuthDto) {
     return this.authService.signIn(signInAuthDto);

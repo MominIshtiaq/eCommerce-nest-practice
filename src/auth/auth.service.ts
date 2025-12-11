@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  HttpCode,
   HttpStatus,
   Inject,
   Injectable,
@@ -50,9 +49,7 @@ export class AuthService {
   public async signIn(signInAuthDto: SignInAuthDto) {
     const user = await this.userService.findUserByEmail(signInAuthDto?.email);
 
-    console.log('user', user);
-
-    const authUser = this.hashingProvider.comparePassword(
+    const authUser = await this.hashingProvider.comparePassword(
       signInAuthDto.password,
       user.password,
     );
