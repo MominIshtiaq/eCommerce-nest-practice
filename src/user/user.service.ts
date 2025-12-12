@@ -9,13 +9,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { HashingProvider } from 'src/common/hashing/hashing.provider';
+import { PaginationProvider } from 'src/common/pagination/pagination.provider';
+import { PaginationDto } from 'src/common/pagination/dto/pagination.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
+    private readonly paginationProvider: PaginationProvider,
     private readonly hashingProvider: HashingProvider,
   ) {}
 
@@ -65,8 +67,11 @@ export class UserService {
     }
   }
 
-  findAll() {
-    return this.userRepository.find();
+  findAll(paginationDto: PaginationDto) {
+    return this.paginationProvider.paginateQuery(
+      paginationDto,
+      this.userRepository,
+    );
   }
 
   findOne(id: number) {
