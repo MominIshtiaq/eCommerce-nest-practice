@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { HashingProvider } from 'src/common/hashing/hashing.provider';
 import { PaginationProvider } from 'src/common/pagination/pagination.provider';
 import { PaginationDto } from 'src/common/pagination/dto/pagination.dto';
+import { RoleService } from 'src/role/role.service';
 
 @Injectable()
 export class UserService {
@@ -19,6 +20,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     private readonly paginationProvider: PaginationProvider,
     private readonly hashingProvider: HashingProvider,
+    private readonly roleService: RoleService,
   ) {}
 
   public async checkUserExistByEmail(email: string) {
@@ -50,6 +52,14 @@ export class UserService {
         throw new BadRequestException('User with this email already exists!!!');
       }
 
+      const validRole = await this.roleService.checkRoleExist(
+        createUserDto.role.name,
+      );
+
+      if (!validRole) {
+        throw new BadRequestException('Invalid role');
+      }
+
       const user = this.userRepository.create({
         ...createUserDto,
         password: await this.hashingProvider.hashpassword(
@@ -63,6 +73,9 @@ export class UserService {
         message: 'User created Successfully',
       };
     } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }

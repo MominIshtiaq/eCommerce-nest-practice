@@ -5,6 +5,7 @@ import {
   IsStrongPassword,
   MaxLength,
 } from 'class-validator';
+import { Role } from 'src/role/entities/role.entity';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -26,4 +27,8 @@ export class CreateUserDto {
   @IsString()
   @IsStrongPassword({ minLength: 5 })
   password: string;
+
+  @IsNotEmpty()
+  @IsString()
+  role: Role;
 }

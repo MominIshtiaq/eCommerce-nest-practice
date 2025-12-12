@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { envValidation } from './config/env.validation';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { RoleModule } from './role/role.module';
 import databaseConfig from './config/database.config';
 
 const ENV_MODE = process.env.ENV_MODE;
@@ -35,6 +36,7 @@ const ENV_MODE = process.env.ENV_MODE;
     }),
     UserModule,
     AuthModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
