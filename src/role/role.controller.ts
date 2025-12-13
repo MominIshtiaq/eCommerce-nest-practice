@@ -9,13 +9,16 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { RoleService } from './role.service';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { PaginationDto } from 'src/common/pagination/dto/pagination.dto';
+import { isAdminGuard } from './guard/is-admin.guard';
 
 @Controller('role')
+@UseGuards(isAdminGuard)
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 

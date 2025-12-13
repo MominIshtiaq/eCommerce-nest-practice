@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -21,6 +23,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     private readonly paginationProvider: PaginationProvider,
     private readonly hashingProvider: HashingProvider,
+    @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
   ) {}
 
@@ -44,7 +47,10 @@ export class UserService {
   public async findUserByEmail(email: string) {
     try {
       let user: User | null;
-      user = await this.userRepository.findOne({ where: { email } });
+      user = await this.userRepository.findOne({
+        where: { email },
+        relations: { role: true },
+      });
 
       if (!user) {
         throw new NotFoundException('User with this email does not exist');

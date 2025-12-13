@@ -1,9 +1,25 @@
-import { CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  forwardRef,
+  Inject,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { UserService } from 'src/user/user.service';
 
 export class isAdminGuard implements CanActivate {
-  canActivate(context: ExecutionContext): Promise<boolean> {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(true), 1000);
-    });
+  constructor(
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService,
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
+    const { email } = request['payload'];
+    const user = await this.userService.findUserByEmail(email);
+    if (!user)
+      throw new UnauthorizedException("You don't have access to use this!!!");
+    if (user?.role?.name !== 'Admin') return false;
+    return true;
   }
 }
