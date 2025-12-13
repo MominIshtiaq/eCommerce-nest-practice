@@ -1,6 +1,7 @@
 import {
   IsEmail,
   IsNotEmpty,
+  IsObject,
   IsString,
   IsStrongPassword,
   MaxLength,
@@ -29,6 +30,6 @@ export class CreateUserDto {
   password: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsObject()
   role: Role;
 }

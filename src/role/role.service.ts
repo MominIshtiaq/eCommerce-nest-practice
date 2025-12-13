@@ -69,13 +69,13 @@ export class RoleService {
   }
 
   public async update(name: string, updateRoleDto: UpdateRoleDto) {
-    let role = await this.findRole(name);
+    const role = await this.findRole(name);
     Object.assign(role, updateRoleDto);
     return await this.roleRepository.save(role);
   }
 
   public async delete(name: string) {
-    let role = await this.findRole(name);
+    const role = await this.findRole(name);
     try {
       await this.roleRepository.delete(role.name);
       return {

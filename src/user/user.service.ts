@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -23,6 +24,17 @@ export class UserService {
     private readonly roleService: RoleService,
   ) {}
 
+  private async checkValidRole(name: string) {
+    let validRole: boolean | null = null;
+    validRole = await this.roleService.checkRoleExist(name);
+
+    if (!validRole) {
+      throw new BadRequestException('Invalid role, This role does not exist');
+    }
+
+    return true;
+  }
+
   public async checkUserExistByEmail(email: string) {
     let user: User | null = null;
     user = await this.userRepository.findOne({ where: { email } });
@@ -35,7 +47,22 @@ export class UserService {
       user = await this.userRepository.findOne({ where: { email } });
 
       if (!user) {
-        throw new BadRequestException('User with this email does not exist');
+        throw new NotFoundException('User with this email does not exist');
+      }
+
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  public async findUserById(id: number) {
+    try {
+      let user: User | null;
+      user = await this.userRepository.findOne({ where: { id } });
+
+      if (!user) {
+        throw new NotFoundException('User with this email does not exist');
       }
 
       return user;
@@ -52,13 +79,7 @@ export class UserService {
         throw new BadRequestException('User with this email already exists!!!');
       }
 
-      const validRole = await this.roleService.checkRoleExist(
-        createUserDto.role.name,
-      );
-
-      if (!validRole) {
-        throw new BadRequestException('Invalid role');
-      }
+      await this.checkValidRole(createUserDto.role.name);
 
       const user = this.userRepository.create({
         ...createUserDto,
@@ -84,6 +105,8 @@ export class UserService {
     return this.paginationProvider.paginateQuery(
       paginationDto,
       this.userRepository,
+      undefined,
+      ['role'],
     );
   }
 
@@ -91,8 +114,21 @@ export class UserService {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  public async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.findUserById(id);
+
+    if (updateUserDto?.role?.name) {
+      await this.checkValidRole(updateUserDto.role.name);
+    }
+
+    if (updateUserDto?.password) {
+      updateUserDto.password = await this.hashingProvider.hashpassword(
+        updateUserDto.password,
+      );
+    }
+
+    Object.assign(user, updateUserDto);
+    return await this.userRepository.save(user);
   }
 
   remove(id: number) {
