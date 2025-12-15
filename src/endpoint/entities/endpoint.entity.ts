@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { HttpEndpointEnum } from '../types';
+import { Permission } from 'src/permission/entities/permission.entity';
 
 @Entity()
 export class Endpoint {
@@ -11,4 +12,7 @@ export class Endpoint {
 
   @Column({ type: 'enum', enum: HttpEndpointEnum })
   method: HttpEndpointEnum;
+
+  @OneToMany(() => Permission, (permission) => permission.endpoint)
+  permissions: Permission[];
 }

@@ -1,3 +1,4 @@
+import { Permission } from 'src/permission/entities/permission.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -22,6 +23,9 @@ export class Role {
 
   @OneToMany(() => User, (user) => user.id)
   users: User[];
+
+  @OneToMany(() => Permission, (permission) => permission.role)
+  permissions: Permission[];
 
   @CreateDateColumn()
   createdAt: Date;

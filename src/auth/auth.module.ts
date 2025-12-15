@@ -6,8 +6,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import authConfigurations from './config/auth.config';
 import { HashingModule } from 'src/common/hashing/hashing.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthorizeGuard } from './guard/authorize.guard';
+// import { APP_GUARD } from '@nestjs/core';
+// import { AuthorizeGuard } from './guard/authorize.guard';
 
 @Module({
   imports: [
@@ -19,10 +19,10 @@ import { AuthorizeGuard } from './guard/authorize.guard';
   controllers: [AuthController],
   providers: [
     AuthService,
-    {
-      provide: APP_GUARD,
-      useClass: AuthorizeGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthorizeGuard,
+    // },
   ],
   exports: [AuthService],
 })
