@@ -23,13 +23,13 @@ export class CreateUserDto {
   @MaxLength(30)
   lastName: string;
 
-  @ApiProperty()
+  @ApiProperty({ default: 'Mehmood@example.com' })
   @IsNotEmpty()
   @IsString()
   @IsEmail()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ default: 'Test123@' })
   @IsNotEmpty()
   @IsString()
   @IsStrongPassword({ minLength: 5 })

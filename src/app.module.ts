@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { RoleModule } from './role/role.module';
 import { EndpointModule } from './endpoint/endpoint.module';
 import { PermissionModule } from './permission/permission.module';
+import { CategoryModule } from './category/category.module';
 import databaseConfig from './config/database.config';
 
 const ENV_MODE = process.env.ENV_MODE;
@@ -41,6 +42,7 @@ const ENV_MODE = process.env.ENV_MODE;
     RoleModule,
     EndpointModule,
     PermissionModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

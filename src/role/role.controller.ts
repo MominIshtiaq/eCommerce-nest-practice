@@ -16,9 +16,9 @@ import { RoleService } from './role.service';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { PaginationDto } from 'src/common/pagination/dto/pagination.dto';
 import { isAdminGuard } from './guard/is-admin.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+// import { ApiBearerAuth } from '@nestjs/swagger';
 
-@ApiBearerAuth()
+// @ApiBearerAuth()
 @Controller('role')
 @UseGuards(isAdminGuard)
 export class RoleController {
