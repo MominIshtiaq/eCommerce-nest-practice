@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationProvider } from 'src/common/pagination/pagination.provider';
@@ -16,19 +16,29 @@ export class CategoryService {
   ) {}
 
   public async create(createCategoryDto: CreateCategoryDto) {
-    const catgory = this.categoryRepository.create(createCategoryDto);
-    return await this.categoryRepository.save(catgory);
+    let parentCatgory: Category | null = null;
+
+    if (createCategoryDto.parentId) {
+      parentCatgory = await this.findOne(createCategoryDto.parentId);
+    }
+    const category = this.categoryRepository.create(createCategoryDto);
+    category.parent = parentCatgory ?? null;
+    return await this.categoryRepository.save(category);
   }
 
   public async findAll(paginationDto: PaginationDto) {
     return await this.paginationProvider.paginateQuery(
       paginationDto,
       this.categoryRepository,
+      { isActive: true },
+      ['children', 'parent'],
     );
   }
 
   public async findOne(id: number) {
-    const category = await this.categoryRepository.findOne({ where: { id } });
+    const category = await this.categoryRepository.findOne({
+      where: { id, isActive: true },
+    });
     if (!category) throw new NotFoundException('Item not found');
     return category;
   }
@@ -40,7 +50,10 @@ export class CategoryService {
     return await this.categoryRepository.save(category);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  public async remove(id: number) {
+    const category = await this.categoryRepository.findOne({ where: { id } });
+    if (!category) throw new NotFoundException('Item not found');
+    category.isActive = false;
+    return await this.categoryRepository.softRemove(category);
   }
 }
