@@ -6,6 +6,7 @@ import { Category } from './entities/category.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationProvider } from 'src/common/pagination/pagination.provider';
 import { PaginationDto } from 'src/common/pagination/dto/pagination.dto';
+import { buildCategoryTree } from 'src/utils';
 
 @Injectable()
 export class CategoryService {
@@ -27,17 +28,23 @@ export class CategoryService {
   }
 
   public async findAll(paginationDto: PaginationDto) {
-    return await this.paginationProvider.paginateQuery(
+    const paginated = await this.paginationProvider.paginateQuery(
       paginationDto,
       this.categoryRepository,
       { isActive: true },
       ['children', 'parent'],
     );
+
+    return {
+      ...paginated,
+      data: buildCategoryTree(paginated.data),
+    };
   }
 
   public async findOne(id: number) {
     const category = await this.categoryRepository.findOne({
       where: { id, isActive: true },
+      relations: ['children', 'parent'],
     });
     if (!category) throw new NotFoundException('Item not found');
     return category;
