@@ -1,4 +1,5 @@
 import slugify from 'slugify';
+import { Product } from 'src/product/entities/product.entity';
 import {
   AfterUpdate,
   BeforeInsert,
@@ -34,6 +35,9 @@ export class Category {
 
   @OneToMany(() => Category, (category) => category.parent)
   children: Category[];
+
+  @OneToMany(() => Product, (product) => product.id)
+  product: Product[];
 
   @DeleteDateColumn()
   deletedAt: Date;
