@@ -58,7 +58,11 @@ export class ProductService {
     return product;
   }
 
-  public async update(id: number, updateProductDto: UpdateProductDto) {
+  public async update(
+    id: number,
+    updateProductDto: UpdateProductDto,
+    fileName?: string | undefined,
+  ) {
     const product = await this.findOne(id);
 
     if (updateProductDto.categoryId) {
@@ -66,6 +70,10 @@ export class ProductService {
         updateProductDto.categoryId,
       );
       product.category = category;
+    }
+
+    if (fileName) {
+      product.image = fileName;
     }
 
     Object.assign(product, updateProductDto);
