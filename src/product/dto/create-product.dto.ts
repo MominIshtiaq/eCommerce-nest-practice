@@ -5,7 +5,6 @@ import {
   IsString,
   Min,
 } from 'class-validator';
-import { Category } from 'src/category/entities/category.entity';
 
 export class CreateProductDto {
   @IsNotEmpty()
@@ -35,7 +34,7 @@ export class CreateProductDto {
   @Min(0)
   quantity: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   categoryId: number;
 }

@@ -17,16 +17,29 @@ export class Product {
   @Column()
   name: string;
 
+  @Column({ nullable: true })
+  image: string;
+
   @Column()
   shortDescription: string;
 
-  @Column({ nullable: true, default: '' })
+  @Column({ type: 'text', nullable: true, default: '' })
   longDescription: string;
 
-  @Column()
+  // precision : 10 => total digits
+  // scale : 2 => digits after decimal
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
-  @Column({ nullable: true, default: 0 })
+  // precision : 10 => total digits
+  // scale : 2 => digits after decimal
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    nullable: true,
+    default: 0,
+  })
   offerPrice: number;
 
   @Column()

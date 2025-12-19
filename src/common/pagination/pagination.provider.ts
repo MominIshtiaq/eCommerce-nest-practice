@@ -45,7 +45,7 @@ export class PaginationProvider {
     const baseUrl = `${protocol}://${hostname}/`; // http://localhost:3002/
     const url = new URL(this.request.url, baseUrl); // http://localhost:3002/user?limit=10&page=1
 
-    const nextPage = page === totalPages ? page : page + 1;
+    const nextPage = totalPages === 0 || page === totalPages ? page : page + 1;
     const prevPage = page <= 1 ? 1 : page - 1;
 
     return {
@@ -58,7 +58,7 @@ export class PaginationProvider {
       },
       links: {
         first: `${url.origin}${url.pathname}?limit=${limit}&page=1`,
-        last: `${url.origin}${url.pathname}?limit=${limit}&page=${totalPages}`,
+        last: `${url.origin}${url.pathname}?limit=${limit}&page=${totalPages || 1}`,
         current: `${url.origin}${url.pathname}?limit=${limit}&page=${page}`,
         next: `${url.origin}${url.pathname}?limit=${limit}&page=${nextPage}`,
         previous: `${url.origin}${url.pathname}?limit=${limit}&page=${prevPage}`,
