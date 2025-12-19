@@ -41,8 +41,18 @@ export class ProductController {
   }
 
   @Post()
-  public async create(@Body() createProductDto: CreateProductDto) {
-    return await this.productService.create(createProductDto);
+  @UseInterceptors(FileInterceptor('file'))
+  public async create(
+    @Body() createProductDto: CreateProductDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: false,
+        validators: [new MaxFileSizeValidator({ maxSize: 1048576 })],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return await this.productService.create(createProductDto, file?.filename);
   }
 
   @Get()

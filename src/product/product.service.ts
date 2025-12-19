@@ -21,7 +21,10 @@ export class ProductService {
     private readonly paginationProvider: PaginationProvider,
   ) {}
 
-  public async create(createProductDto: CreateProductDto) {
+  public async create(
+    createProductDto: CreateProductDto,
+    fileName?: string | undefined,
+  ) {
     try {
       const product = this.productRepository.create(createProductDto);
       if (createProductDto.categoryId) {
@@ -29,6 +32,9 @@ export class ProductService {
           createProductDto.categoryId,
         );
         product.category = catgory;
+      }
+      if (fileName) {
+        product.image = fileName;
       }
       return await this.productRepository.save(product);
     } catch (error) {
