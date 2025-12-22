@@ -36,6 +36,6 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
-  @ManyToOne(() => Role, (role) => role.name, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Role, (role) => role.name)
   role: Role;
 }

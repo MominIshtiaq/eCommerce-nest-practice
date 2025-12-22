@@ -8,10 +8,7 @@ import {
 import { UserService } from 'src/user/user.service';
 
 export class isAdminGuard implements CanActivate {
-  constructor(
-    @Inject(forwardRef(() => UserService))
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();

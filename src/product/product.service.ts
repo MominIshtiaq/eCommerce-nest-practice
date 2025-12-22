@@ -82,8 +82,7 @@ export class ProductService {
   }
 
   public async remove(id: number) {
-    const product = await this.findOne(id);
-    return await this.productRepository.remove(product);
+    return await this.productRepository.delete(id);
   }
 
   public async uploadFile(id: number, file: string) {

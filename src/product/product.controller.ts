@@ -14,7 +14,6 @@ import {
   UploadedFile,
   ParseFilePipe,
   MaxFileSizeValidator,
-  FileTypeValidator,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -26,7 +25,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Post('/upload/:id')
+  @Post('/upload/:type/:id')
   @UseInterceptors(FileInterceptor('file'))
   public async uploadFile(
     @Param('id', ParseIntPipe) id: number,
@@ -41,6 +40,7 @@ export class ProductController {
   }
 
   @Post()
+  @Post(':type')
   @UseInterceptors(FileInterceptor('file'))
   public async create(
     @Body() createProductDto: CreateProductDto,
@@ -65,7 +65,7 @@ export class ProductController {
     return this.productService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch(':type/:id')
   @UseInterceptors(FileInterceptor('file'))
   update(
     @Param('id', ParseIntPipe) id: number,

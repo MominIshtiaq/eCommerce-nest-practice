@@ -23,7 +23,6 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     private readonly paginationProvider: PaginationProvider,
     private readonly hashingProvider: HashingProvider,
-    @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
   ) {}
 
@@ -116,8 +115,12 @@ export class UserService {
     );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  public async findOne(id: number) {
+    console.log('working');
+    console.log(this.userRepository);
+    const user = await this.userRepository.findBy({ id });
+    if (!user) throw new NotFoundException();
+    return user;
   }
 
   public async update(id: number, updateUserDto: UpdateUserDto) {
@@ -137,7 +140,8 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  public async remove(id: number) {
+    const user = await this.findOne(id);
+    return await this.userRepository.remove(user);
   }
 }
