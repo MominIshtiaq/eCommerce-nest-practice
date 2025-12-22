@@ -21,7 +21,7 @@ export class Role {
   })
   description: string;
 
-  @OneToMany(() => User, (user) => user.id)
+  @OneToMany(() => User, (user) => user.role)
   users: User[];
 
   @OneToMany(() => Permission, (permission) => permission.role)

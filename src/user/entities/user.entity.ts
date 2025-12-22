@@ -36,6 +36,9 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
-  @ManyToOne(() => Role, (role) => role.name)
+  @ManyToOne(() => Role, (role) => role.users, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   role: Role;
 }

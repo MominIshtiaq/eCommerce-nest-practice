@@ -29,7 +29,9 @@ export class RoleService {
   public async findRole(name: string) {
     try {
       let role: Role | null = null;
-      role = await this.roleRepository.findOne({ where: { name } });
+      role = await this.roleRepository.findOne({
+        where: { name },
+      });
       if (!role) throw new NotFoundException();
       return role;
     } catch (error) {
@@ -65,6 +67,8 @@ export class RoleService {
     return await this.paginationProvider.paginateQuery(
       paginationDto,
       this.roleRepository,
+      undefined,
+      ['users', 'permissions'],
     );
   }
 
@@ -77,7 +81,7 @@ export class RoleService {
   public async delete(name: string) {
     const role = await this.findRole(name);
     try {
-      await this.roleRepository.delete(role.name);
+      await this.roleRepository.remove(role);
       return {
         message: `Record deleted successfully`,
       };
@@ -91,4 +95,12 @@ export class RoleService {
       throw new InternalServerErrorException();
     }
   }
+
+  // public async delete(name: string) {
+  //   const role = await this.findRole(name);
+  //   await this.roleRepository.remove(role);
+  //   return {
+  //     message: `Record deleted successfully`,
+  //   };
+  // }
 }
