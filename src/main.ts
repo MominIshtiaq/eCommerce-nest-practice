@@ -43,7 +43,7 @@ async function bootstrap() {
     await queryRunner.startTransaction();
     // Delete all endpoint & permission (TRUNCATE)
     await queryRunner.query('TRUNCATE endpoint RESTART IDENTITY CASCADE'); // to run the PostgreSQL query.
-    // await queryRunner.query('TRUNCATE permission RESTART IDENTITY CASCADE');
+    await queryRunner.query('TRUNCATE permission RESTART IDENTITY CASCADE'); // to run the Postgres query
     console.log('Truncate successfully!!!');
 
     // Add all routes to the Endpoint Table

@@ -1,7 +1,5 @@
 import {
   BadRequestException,
-  forwardRef,
-  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -15,6 +13,7 @@ import { HashingProvider } from 'src/common/hashing/hashing.provider';
 import { PaginationProvider } from 'src/common/pagination/pagination.provider';
 import { PaginationDto } from 'src/common/pagination/dto/pagination.dto';
 import { RoleService } from 'src/role/role.service';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class UserService {
@@ -141,5 +140,20 @@ export class UserService {
   public async remove(id: number) {
     const user = await this.findOne(id);
     return await this.userRepository.remove(user);
+  }
+
+  public async changePassword(changePasswordDto: ChangePasswordDto) {
+    const user = await this.findUserByEmail(changePasswordDto.email);
+    if (!user) throw new BadRequestException('User not found');
+    const validPassword = this.hashingProvider.comparePassword(
+      user.password,
+      changePasswordDto.password,
+    );
+    if (!validPassword)
+      throw new BadRequestException('Password does not match');
+    user.password = await this.hashingProvider.hashpassword(
+      changePasswordDto.newPassword,
+    );
+    return await this.userRepository.save(user);
   }
 }

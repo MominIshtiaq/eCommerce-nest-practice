@@ -13,6 +13,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationDto } from 'src/common/pagination/dto/pagination.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 // import { ApiBearerAuth } from '@nestjs/swagger';
 
 // @ApiBearerAuth()
@@ -41,6 +42,11 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.userService.update(id, updateUserDto);
+  }
+
+  @Patch()
+  changePassword(@Body() changePasswordDto: ChangePasswordDto) {
+    return this.userService.changePassword(changePasswordDto);
   }
 
   @Delete(':id')
