@@ -8,6 +8,7 @@ import { Endpoint } from './endpoint/entities/endpoint.entity';
 import { HttpEndpointEnum } from './endpoint/types';
 import { Role } from './role/entities/role.entity';
 import { Permission } from './permission/entities/permission.entity';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,6 +29,9 @@ async function bootstrap() {
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
+
+  const configService = app.get(ConfigService);
+  app.enableCors(configService.get('corsConfig', { infer: true }));
 
   await app.listen(process.env.PORT ?? 3002);
 

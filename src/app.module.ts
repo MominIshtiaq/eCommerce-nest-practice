@@ -11,7 +11,9 @@ import { EndpointModule } from './endpoint/endpoint.module';
 import { PermissionModule } from './permission/permission.module';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
+import { CartModule } from './cart/cart.module';
 import databaseConfig from './config/database.config';
+import corsConfig from './config/cors.config';
 
 const ENV_MODE = process.env.ENV_MODE;
 
@@ -21,7 +23,7 @@ const ENV_MODE = process.env.ENV_MODE;
       isGlobal: true,
       envFilePath:
         ENV_MODE === 'production' ? '.env' : `.env.${ENV_MODE?.trim()}`,
-      load: [databaseConfig],
+      load: [databaseConfig, corsConfig],
       validationSchema: envValidation,
     }),
     TypeOrmModule.forRootAsync({
@@ -45,6 +47,7 @@ const ENV_MODE = process.env.ENV_MODE;
     PermissionModule,
     CategoryModule,
     ProductModule,
+    CartModule,
   ],
   controllers: [AppController],
   providers: [AppService],

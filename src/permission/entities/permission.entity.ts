@@ -13,7 +13,7 @@ export class Permission {
   @PrimaryColumn()
   endpointId: number;
 
-  @ManyToOne(() => Role, (role) => role.name)
+  @ManyToOne(() => Role, (role) => role.permissions)
   @JoinColumn({ name: 'roleName', referencedColumnName: 'name' })
   role: Role;
 
